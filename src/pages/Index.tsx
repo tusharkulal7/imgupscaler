@@ -29,14 +29,6 @@ const Index = () => {
           <span className="hover:text-foreground cursor-pointer">Pricing</span>
           <span className="hover:text-foreground cursor-pointer">Blog</span>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="px-4 py-2 text-sm rounded-full border border-foreground/30 text-foreground hover:bg-secondary transition">
-            Sign In
-          </button>
-          <button className="px-4 py-2 text-sm rounded-full bg-primary text-primary-foreground hover:opacity-90 transition">
-            Start Free Account
-          </button>
-        </div>
       </nav>
 
       {/* Hero */}
