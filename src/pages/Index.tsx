@@ -1,20 +1,41 @@
-import { useState, useRef } from "react";
-import { ImagePlus, Star } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ImagePlus, Star, Loader2 } from "lucide-react";
 
 const Index = () => {
-  const [showMedia, setShowMedia] = useState(false);
+  const [phase, setPhase] = useState<"main" | "loading" | "media">("main");
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleChooseImages = () => {
-    setShowMedia(true);
-    setTimeout(() => {
-      videoRef.current?.play();
-      audioRef.current?.play();
-    }, 100);
+    setPhase("loading");
   };
 
-  if (showMedia) {
+  useEffect(() => {
+    if (phase === "loading") {
+      const timer = setTimeout(() => {
+        setPhase("media");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase === "media") {
+      videoRef.current?.play();
+      audioRef.current?.play();
+    }
+  }, [phase]);
+
+  if (phase === "loading") {
+    return (
+      <div className="fixed inset-0 bg-black flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-12 h-12 text-white animate-spin" />
+        <p className="text-white text-lg font-medium animate-pulse">Processing your images...</p>
+      </div>
+    );
+  }
+
+  if (phase === "media") {
     return (
       <div className="fixed inset-0 bg-black">
         <video
@@ -24,7 +45,7 @@ const Index = () => {
           className="w-full h-full object-cover"
           src="/video.mp4"
         />
-        <audio ref={audioRef} src="/audio.mpeg" />
+        <audio ref={audioRef} src="/audio.mpeg" loop />
       </div>
     );
   }
