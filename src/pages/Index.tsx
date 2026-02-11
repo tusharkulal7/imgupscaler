@@ -1,7 +1,5 @@
 import { useState, useRef } from "react";
 import { ImagePlus, Star } from "lucide-react";
-import audioSrc from "@/assets/audio.mpeg";
-import videoSrc from "@/assets/video.mp4";
 
 const Index = () => {
   const [showMedia, setShowMedia] = useState(false);
@@ -71,14 +69,14 @@ const Index = () => {
               ref={videoRef}
               controls
               className="w-full"
-              src={videoSrc}
+              src="/video.mp4"
               muted
               playsInline
             >
               Your browser does not support the video tag.
             </video>
           </div>
-          <audio ref={audioRef} controls className="w-full" src={audioSrc}>
+          <audio ref={audioRef} controls className="w-full" src="/audio.mpeg">
             Your browser does not support the audio element.
           </audio>
         </section>
