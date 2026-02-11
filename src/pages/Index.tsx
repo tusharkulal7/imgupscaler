@@ -3,52 +3,20 @@ import { ImagePlus, Star, Loader2 } from "lucide-react";
 
 const Index = () => {
   const [phase, setPhase] = useState<"main" | "loading" | "media">("main");
-  const [mediaLoaded, setMediaLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleChooseImages = () => {
     setPhase("loading");
-    setMediaLoaded(false);
-    
-    // Initialize and load media
-    const loadMedia = () => {
-      let audioLoaded = false;
-      let videoLoaded = false;
-      
-      const checkBothLoaded = () => {
-        if (audioLoaded && videoLoaded) {
-          setMediaLoaded(true);
-        }
-      };
-      
-      // Load audio
-      if (audioRef.current) {
-        audioRef.current.volume = 1.0;
-        audioRef.current.addEventListener('canplaythrough', () => {
-          audioLoaded = true;
-          console.log("Audio fully loaded");
-          checkBothLoaded();
-        }, { once: true });
-        audioRef.current.load();
-      }
-      
-      // Load video
-      if (videoRef.current) {
-        videoRef.current.addEventListener('canplaythrough', () => {
-          videoLoaded = true;
-          console.log("Video fully loaded");
-          checkBothLoaded();
-        }, { once: true });
-        videoRef.current.load();
-      }
-    };
-    
-    loadMedia();
+    // Initialize audio with user interaction
+    if (audioRef.current) {
+      audioRef.current.volume = 1.0;
+      audioRef.current.load();
+    }
   };
 
   useEffect(() => {
-    if (phase === "loading" && mediaLoaded) {
+    if (phase === "loading") {
       // Start audio at 2 seconds
       const audioTimer = setTimeout(() => {
         const playAudio = async () => {
@@ -75,7 +43,7 @@ const Index = () => {
         clearTimeout(phaseTimer);
       };
     }
-  }, [phase, mediaLoaded]);
+  }, [phase]);
 
   useEffect(() => {
     if (phase === "media") {
@@ -99,14 +67,7 @@ const Index = () => {
     return (
       <div className="fixed inset-0 bg-black flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-12 h-12 text-white animate-spin" />
-        <p className="text-white text-lg font-medium animate-pulse">
-          {mediaLoaded ? "Processing your images..." : "Loading media..."}
-        </p>
-        {!mediaLoaded && (
-          <p className="text-white text-sm opacity-75">
-            Preparing audio and video for optimal experience
-          </p>
-        )}
+        <p className="text-white text-lg font-medium animate-pulse">Processing your images...</p>
       </div>
     );
   }
@@ -118,6 +79,7 @@ const Index = () => {
           ref={videoRef}
           muted
           playsInline
+          preload="auto"
           className="w-full h-full object-cover"
           src="/video.mp4"
         />
