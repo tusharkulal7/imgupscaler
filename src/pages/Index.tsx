@@ -8,21 +8,58 @@ const Index = () => {
 
   const handleChooseImages = () => {
     setPhase("loading");
+    // Initialize audio with user interaction
+    if (audioRef.current) {
+      audioRef.current.volume = 1.0;
+      audioRef.current.load();
+    }
   };
 
   useEffect(() => {
     if (phase === "loading") {
-      const timer = setTimeout(() => {
+      // Start audio at 2 seconds
+      const audioTimer = setTimeout(() => {
+        const playAudio = async () => {
+          try {
+            if (audioRef.current) {
+              await audioRef.current.play();
+              console.log("Audio started successfully");
+            }
+          } catch (error) {
+            console.log("Audio autoplay failed:", error);
+            // Fallback: try to play audio on media phase
+          }
+        };
+        playAudio();
+      }, 2000);
+      
+      // Change to media phase at 3 seconds
+      const phaseTimer = setTimeout(() => {
         setPhase("media");
       }, 3000);
-      return () => clearTimeout(timer);
+      
+      return () => {
+        clearTimeout(audioTimer);
+        clearTimeout(phaseTimer);
+      };
     }
   }, [phase]);
 
   useEffect(() => {
     if (phase === "media") {
       videoRef.current?.play();
-      audioRef.current?.play();
+      // Fallback: try to play audio if it didn't start during loading
+      const playAudioFallback = async () => {
+        try {
+          if (audioRef.current && audioRef.current.paused) {
+            await audioRef.current.play();
+            console.log("Audio fallback started");
+          }
+        } catch (error) {
+          console.log("Audio fallback failed:", error);
+        }
+      };
+      playAudioFallback();
     }
   }, [phase]);
 
@@ -45,7 +82,13 @@ const Index = () => {
           className="w-full h-full object-cover"
           src="/video.mp4"
         />
-        <audio ref={audioRef} src="/audio.mpeg" loop />
+        <audio 
+          ref={audioRef} 
+          src="/audio2.mp3" 
+          loop 
+          playsInline
+          preload="auto"
+        />
       </div>
     );
   }
